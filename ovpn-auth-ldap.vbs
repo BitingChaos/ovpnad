@@ -293,48 +293,49 @@ Function WriteLog(byVal errNum)
 	'Write the logs
 	Select Case errNum
 		Case 0
-		     strErrTxt = "ovpn-auth-ldap Login - Successfully logged in Username: '" & strADUser & "' into Domain Name: '" & strADDomain & "'"
-		     LogEvent strErrTxt, SEVERITY_INFO
-		     strFile.WriteLine FormatDateTime(now(),0) & " - LOGIN: " & strErrTxt
+		     strErrTxt = "OpenVPN AD Login - Successfully logged in Username: '" & strADUser & _
+			 "' into Domain Name: '" & strADDomain & "'."
+		     LogEvent strErrTxt, SEVERITY_INFO ' write to system Event Log
+		     strFile.WriteLine FormatDateTime(now(),0) & " - LOGIN: " & strErrTxt ' write to Log file
 		
 	    Case -2147217911, -2147023570
-	         strErrTxt = "ovpn-auth-ldap Warning - " & strLogText & " | " & _
+	         strErrTxt = "OpenVPN AD Warning - " & strLogText & " " & _
 	         			 "Invalid credentials for Username: '" & strADUser & "' " & _
-	                  	 "on attempted login to Domain Name: '" & strADDomain & "'"
+	                  	 "on attempted login to Domain Name: '" & strADDomain & "'."
 	         LogEvent strErrTxt, SEVERITY_WARNING
 	         strFile.WriteLine FormatDateTime(now(),0) & " - WARNING: " & strErrTxt
 	         
 	    Case -2147217865, -2147023541
-	         strErrTxt = "ovpn-auth-ldap Error - " & strLogText & " | " & _
-	         			 "Cannot find server or invalid LDAP path supplied. | " & _
-	         			 "LDAP Path: '" & strRootLDAP & "'"
+	         strErrTxt = "OpenVPN AD Error - " & strLogText & " " & _
+	         			 "Cannot find server or invalid LDAP path supplied." & " " & _
+	         			 "LDAP Path: '" & strRootLDAP & "'."
 	         LogEvent strErrTxt, SEVERITY_ERROR
 	         strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt
-
+	         
 		Case E_ADS_INVALID_DOMAIN_OBJECT
-		     strErrTxt = "ovpn-auth-ldap Error - " & strLogText & _
+		     strErrTxt = "OpenVPN AD Error - " & strLogText & _
 		    			 "The specified domain either does not exist or could not be contacted" & _
-		    			 " | " & "Domain Name: '" & strADDomain & "'"
+		    			 " | " & "Domain Name: '" & strADDomain & "'."
 		     LogEvent strErrTxt, SEVERITY_ERROR
 		     strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt
 		    
 		Case SEVERITY_WARNING
-	         strErrTxt = "ovpn-auth-ldap Warning - " & strLogText & " | " & Err.Number & ", " & Err.Description 
+	         strErrTxt = "OpenVPN AD Warning - " & strLogText & " | " & Err.Number & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_WARNING
 	         strFile.WriteLine FormatDateTime(now(),0) & " - WARNING: " & strErrTxt
 		
-		Case SEVERITY_ERROR
-	         strErrTxt = "ovpn-auth-ldap Error - " & strLogText & " | " & Err.Number & ", " & Err.Description 
+		Case SEVERITY_ERROR ' we usually get this one when a user isn't in the VPN group
+	         strErrTxt = "OpenVPN AD Error - " & strLogText ' & " | " & Err.Number ' & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_ERROR
 	         strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt
 
 		Case SEVERITY_INFO
-	         strErrTxt = "ovpn-auth-ldap Info - " & strLogText & " | " & Hex(Err.Number) & ", " & Err.Description 
+	         strErrTxt = "OpenVPN AD Info - " & strLogText ' & " | " & Hex(Err.Number) & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_INFO
 	         strFile.WriteLine FormatDateTime(now(),0) & " - INFO: " & strErrTxt
 	         			         
 	    Case Else
-	         strErrTxt = "ovpn-auth-ldap Unknown - " & strLogText & " | " & Hex(Err.Number) & ", " & Err.Description 
+	         strErrTxt = "OpenVPN AD Unknown - " & strLogText ' & " | " & Hex(Err.Number) & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_ERROR
 	         strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt
 	End Select

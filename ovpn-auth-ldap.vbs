@@ -46,23 +46,38 @@ Const SEVERITY_WARNING = &h02
 '------------------------------------------
 '*GLOBALS*
 '------------------------------------------
-Dim strAppPath:strAppPath = Replace(WScript.ScriptFullName, WScript.ScriptName, "") ' This variable DOES have a trailing '\'
 
+' set location of configuration file, including trailing "\"
+Dim strIniPath:strIniPath = "C:\Program Files\OpenVPN\config\"
+
+' set configuration file name
 Dim strIniFile:strIniFile = "ovpn-auth-ldap.ini"
+
+' set location of log file, including trailing "\"
+Dim strLogPath:strLogPath = "C:\Program Files\OpenVPN\log\"
+
+' set log file name
+Dim strLogFile:strLogFile = "ovpn-auth-ldap.log"
+
+'Dim strAppPath:strAppPath = Replace(WScript.ScriptFullName, WScript.ScriptName, "") ' This variable DOES have a trailing '\'
+
 Dim strIniFileOrig:strIniFileOrig = "ovpn-auth-ldap.orig.ini"
 
-Dim strLogFile:strLogFile = "ovpn-auth-ldap.log"
+' set default LogLevel
 Dim strLogLevel:strLogLevel = "2"
 
 Dim strLogText:strLogText = "No Error" 
 
+' define AD/LDAP variables
 Dim strRootLDAP, strADDomain, strADServer, strADGroupDN, strADUser, strADPass
+
+'------------------------------------------
 
 Public Sub Main
 
 	Dim retVal:retVal = False
 	
-	Call LoadSettings(strAppPath, strIniFile)
+	Call LoadSettings(StrIniPath, strIniFile) ' load ini file
 	retVal = ParseParams()
 	retVal = IsValidUser()
 	
@@ -78,11 +93,11 @@ Public Sub Main
 	
 End Sub
 
-'Loads the settings from the provided path and Ini filename, strPath should include trailing '\'
+' load settings from the INI file
 Public Sub LoadSettings(strPath, strFile)
 
 	Dim objFso, objIni
-	Dim strFilePath:strFilePath = strPath & strFile	
+	Dim strFilePath:strFilePath = strPath & strFile ' set ini file
 		
 	' --------------------------------------------------------
 	' Load Settings from INI file
@@ -144,7 +159,7 @@ Public Sub LoadSettings(strPath, strFile)
 	
 End Sub
 
-'Parse command line parameters
+' parse command-line parameters
 Function ParseParams()
 
 	Dim intParamCount
@@ -206,12 +221,12 @@ Function ParseParams()
 End Function
 
 
-'Attempt user login using provided credentials,
-'if user has valid login then check group membership.
+' attempt user login using provided credentials.
+' if user has valid login then check group membership.
 Function IsValidUser()
 
 	On Error Resume Next 
-	Const E_ADS_PROPERTY_NOT_FOUND  = &h8000500D
+	Const E_ADS_PROPERTY_NOT_FOUND = &h8000500D
 
 	Dim arrMemberOf
 	Dim strPath, strUser, strPassword, strMember
@@ -255,7 +270,7 @@ End Function
 Public Sub PrintHelp()
 
 	WScript.Echo "ovpn-auth-ldap.vbs - Secure LDAP Authentiation for User Logins" & vbNewLine & _
-				 "Built for OpenVPN 2.1-Up running on Windows Server/XP/Vista/7 x86/x64"
+				 "For OpenVPN 2.1 and newer, running on Windows Server/XP/Vista/7 x86/x64"
 	WScript.Echo "---------------------------------------------------------------------"
 	WScript.Echo "1.) Start by configuring the ovpn-auth-ldap.ini file " & vbNewLine & _
 				 "    to match your network configuration." & vbNewLine
@@ -276,17 +291,16 @@ Public Sub PrintHelp()
 
 End Sub
 
-'Logs Errors to Event Log and Log File
+' logs errors to Event Log and Log File
 Function WriteLog(byVal errNum)
 
 	Dim objFso, objFolder
-	Dim strFile, strFolder, strFileName, strPath, strErrTxt
+	Dim strFile, strFolder, strPath, strErrTxt
 		
 	' --------------------------------------------------------
-	' Set the folder and file name
-	strFileName = "ovpn-auth-ldap.log"
-	strFolder = strAppPath
-	strPath = strAppPath & strFileName
+	' set the folder and file name
+	strFolder = strLogPath ' folder for log file
+	strPath = strLogPath & strLogFile ' location may be different than INI file
 			
 	' --------------------------------------------------------
 	' Section to create folder and hold file.
@@ -304,7 +318,7 @@ Function WriteLog(byVal errNum)
 	End If
 	
 	' --------------------------------------------------------
-	' output messages to log
+	' write the logs
 	Select Case errNum
 		Case 0
 		     strErrTxt = "OpenVPN AD Login - Successfully logged in Username: '" & strADUser & _
@@ -359,7 +373,7 @@ Function WriteLog(byVal errNum)
 
 End Function
 
-'Write logs to Event Log Service
+' write logs to system Event Log
 Public Sub LogEvent(EventDescription, EventType)
 	
 	On Error Resume Next

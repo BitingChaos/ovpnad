@@ -1,3 +1,16 @@
+'
+' OpenVPN AD Authentication for Windows
+'
+' Nicholas Caito
+' xenomorph@gmail.com
+' http://xenomorph.net/
+' https://github.com/BitingChaos/
+'
+' Original file copyright Jesse Jordan
+' http://ovpn-auth-ldap.sourceforge.net/
+'
+'
+
 
 'Enum Definitions for the ADS_AUTHENTICATION_ENUM used with the IADsOpenDSObject
 '------------------------------------------
@@ -84,7 +97,7 @@ Public Sub LoadSettings(strPath, strFile)
 		objIni.IniKey = "ADServer"
 		strADServer = objIni.Value
 		If strADServer = "" Then
-			strLogText = "Ini Value 'ADServer' cannot be blank"
+			strLogText = "INI Value 'ADServer' cannot be blank!"
 			WriteLog(SEVERITY_ERROR)
 			WScript.Quit(1)
 		End If
@@ -92,7 +105,7 @@ Public Sub LoadSettings(strPath, strFile)
 		objIni.IniKey = "Domain"
 		strADDomain = objIni.Value
 		If strADDomain = "" Then
-			strLogText = "Ini Value 'Domain' cannot be blank"
+			strLogText = "INI Value 'Domain' cannot be blank!"
 			WriteLog(SEVERITY_ERROR)
 			WScript.Quit(1)
 		End If
@@ -100,7 +113,7 @@ Public Sub LoadSettings(strPath, strFile)
 		objIni.IniKey = "DN"
 		strRootLDAP = objIni.Value
 		If strRootLDAP = "" Then
-			strLogText = "Ini Value 'DN' cannot be blank"
+			strLogText = "INI Value 'DN' cannot be blank!"
 			WriteLog(SEVERITY_ERROR)
 			WScript.Quit(1)
 		End If
@@ -108,7 +121,7 @@ Public Sub LoadSettings(strPath, strFile)
 		objIni.IniKey = "ADGroupDN"
 		strADGroupDN = objIni.Value
 		If strADGroupDN = "" Then
-			strLogText = "Ini Value 'ADGroup' cannot be blank"
+			strLogText = "INI Value 'ADGroup' cannot be blank!"
 			WriteLog(SEVERITY_ERROR)
 			WScript.Quit(1)
 		End If
@@ -119,12 +132,12 @@ Public Sub LoadSettings(strPath, strFile)
 		strLogLevel = objIni.Value
 		
 		If strADDomain = "" Then
-			strLogText = "Ini Value 'LogLevel' not defined, defaulting to LogLevel 2 " & vbNewLine & _
+			strLogText = "INI Value 'LogLevel' not defined, defaulting to LogLevel 2. " & _
 						 "Errors, Warnings and Authentication Status Messages will be logged."
 			WriteLog(SEVERITY_WARNING)
 		End If
 	Else
-			strLogText = "Ini File '" & strFilePath & "' could not be opened."
+			strLogText = "INI File '" & strFilePath & "' could not be opened!"
 			WriteLog(SEVERITY_ERROR)
 			WScript.Quit(1)	
 	End If
@@ -174,11 +187,11 @@ Function ParseParams()
 	'Now Check the validity of the params
 	If strADUser = "" Or strADPass = "" Then
 		If strADUser = "" Then
-			strLogText = "No Username provided"
+			strLogText = "No Username provided."
 		ElseIf strADPass = "" Then
-			strLogText = "No Password provided for User:" & vbNewLine & strADUser
+			strLogText = "No Password provided for User:" & vbNewLine & strADUser & "."
 		ElseIf strADUser = "" And strADPass = "" Then
-			strLogText = "No user credentials provided"
+			strLogText = "No user credentials provided."
 		End If					
 		WriteLog(SEVERITY_ERROR)
 		WScript.Quit(1)
@@ -291,7 +304,7 @@ Function WriteLog(byVal errNum)
 	End If
 	
 	' --------------------------------------------------------
-	'Write the logs
+	' output messages to log
 	Select Case errNum
 		Case 0
 		     strErrTxt = "OpenVPN AD Login - Successfully logged in Username: '" & strADUser & _
@@ -334,8 +347,8 @@ Function WriteLog(byVal errNum)
 	         strErrTxt = "OpenVPN AD Info - " & strLogText ' & " | " & Hex(Err.Number) & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_INFO
 	         strFile.WriteLine FormatDateTime(now(),0) & " - INFO: " & strErrTxt
-	         		         
-	    Case Else
+	         
+		Case Else
 	         strErrTxt = "OpenVPN AD Unknown - " & strLogText ' & " | " & Hex(Err.Number) & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_ERROR
 	         strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt

@@ -228,7 +228,7 @@ Function IsValidUser()
  
 	For Each strMember in arrMemberOf
 		Set objMember = GetObject("LDAP://" & strMember)
-		If strADUser = objMember.SamAccountName Then 
+		If (StrComp(strADUser, objMember.SamAccountName, vbTextCompare) = 0) Then ' fix issue with case-sensitive username 
 			retVal = True
 			Exit For
 		End If

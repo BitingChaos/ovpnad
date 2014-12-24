@@ -164,8 +164,8 @@ Function ParseParams()
 			strADPass = WScript.Arguments.Item(1)
 			
 		Case Else
-			'To many params, error
-			strLogText = "To many parameters passed"
+			' too many parameters given, error
+			strLogText = "Too many parameters passed."
 			WriteLog(SEVERITY_ERROR)
 			WScript.Quit(1)
 	End Select

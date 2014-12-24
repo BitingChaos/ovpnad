@@ -54,7 +54,8 @@ Public Sub Main
 	retVal = IsValidUser()
 	
 	If retVal = False Then
-		strLogText = "Invalid login for Username: " & strADUser & " - Ensure user is a member of the VPN Group"
+		strLogText = "Invalid login for Username: '" & strADUser & "'. " & _
+		"Ensure that the user is a member of the correct VPN Group!"
 		WriteLog(SEVERITY_ERROR)
 		WScript.Quit(1)
 	Else
@@ -216,7 +217,7 @@ Function IsValidUser()
                                       ADS_USE_ENCRYPTION)
 
 	If Err Then
-		strLogText = "An Authentication error has occured"
+		strLogText = "An authentication error has occurred!"
 		WriteLog(Err.Number)
 		WScript.Quit(1)
 	End If
@@ -297,7 +298,7 @@ Function WriteLog(byVal errNum)
 			 "' into Domain Name: '" & strADDomain & "'."
 		     LogEvent strErrTxt, SEVERITY_INFO ' write to system Event Log
 		     strFile.WriteLine FormatDateTime(now(),0) & " - LOGIN: " & strErrTxt ' write to Log file
-		
+		     
 	    Case -2147217911, -2147023570
 	         strErrTxt = "OpenVPN AD Warning - " & strLogText & " " & _
 	         			 "Invalid credentials for Username: '" & strADUser & "' " & _
@@ -318,22 +319,22 @@ Function WriteLog(byVal errNum)
 		    			 " | " & "Domain Name: '" & strADDomain & "'."
 		     LogEvent strErrTxt, SEVERITY_ERROR
 		     strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt
-		    
+		     
 		Case SEVERITY_WARNING
 	         strErrTxt = "OpenVPN AD Warning - " & strLogText & " | " & Err.Number & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_WARNING
 	         strFile.WriteLine FormatDateTime(now(),0) & " - WARNING: " & strErrTxt
-		
+	         
 		Case SEVERITY_ERROR ' we usually get this one when a user isn't in the VPN group
 	         strErrTxt = "OpenVPN AD Error - " & strLogText ' & " | " & Err.Number ' & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_ERROR
 	         strFile.WriteLine FormatDateTime(now(),0) & " - ERROR: " & strErrTxt
-
+	         
 		Case SEVERITY_INFO
 	         strErrTxt = "OpenVPN AD Info - " & strLogText ' & " | " & Hex(Err.Number) & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_INFO
 	         strFile.WriteLine FormatDateTime(now(),0) & " - INFO: " & strErrTxt
-	         			         
+	         		         
 	    Case Else
 	         strErrTxt = "OpenVPN AD Unknown - " & strLogText ' & " | " & Hex(Err.Number) & ", " & Err.Description 
 	         LogEvent strErrTxt, SEVERITY_ERROR
